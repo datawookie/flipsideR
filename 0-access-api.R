@@ -33,25 +33,26 @@ getOptionQuote <- function(symbol){
     url = sprintf(URL2, symbol, y, m, d)
     expiry = fromJSON(fixJSON(getURL(url)))
     #
-    expiry$calls$type = "call"
-    expiry$puts$type  = "put"
+    expiry$calls$type = "Call"
+    expiry$puts$type  = "Put"
     #
     prices = rbind(expiry$calls, expiry$puts)
     #
     prices$expiry = sprintf("%4d-%02d-%02d", y, m, d)
+    prices$underlying.price = expiry$underlying_price
     #
-    prices[, c("expiry", "type", "strike", "oi")]
+    prices
   })
   #
   # Concatenate data for all expiration dates and add in symbol column
   #
   options = cbind(data.frame(symbol), rbind.fill(options))
   #
-  options[,4] = as.numeric(options[,4])
-  options[,5] = suppressWarnings(as.integer(options[,5]))
+  options[,12] = as.numeric(options[,12])
+  options[,10] = suppressWarnings(as.integer(options[,10]))
   #
-  names(options)[5] = "open.interest"
+  names(options)[10] = "open.interest"
   #
-  options
+  options[, c(1, 16, 13, 12, 10, 17)]
 }
 aapl_opt = getOptionQuote("AAPL")
