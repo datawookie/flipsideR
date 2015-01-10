@@ -1,5 +1,9 @@
-AAPL = getOptionQuote("AAPL")
-MMM = getOptionQuote("MMM")
+source("google-finance-options-chain.R")
+
+AAPL = getOptionQuotes("AAPL")
+MMM = getOptionQuotes("MMM")
+
+head(AAPL)
 
 library(ggplot2)
 
@@ -12,3 +16,10 @@ ggplot(AAPL, aes(x = strike)) +
   facet_grid(expiry ~ type) +
   theme_classic() + theme(legend.position = "none")
 dev.off()
+
+ggplot(AAPL, aes(x = strike)) +
+  geom_point(aes(y = expiry, col = type)) +
+  xlab("Strike Price") + ylab("Expiry Date") +
+  scale_colour_manual(values = c("red", "blue")) +
+  facet_grid(. ~ type) +
+  theme_classic() + theme(legend.position = "none")

@@ -8,7 +8,7 @@ library(plyr)
 # for large JSON packages.
 #
 fixJSON <- function(json){
-  gsub("([\\{,]+)([^: ]*):", '\\1"\\2":', json)
+  gsub('([^,{:]+):', '"\\1":', json)
 }
 
 # URL templates
@@ -16,18 +16,12 @@ fixJSON <- function(json){
 URL1 = 'http://www.google.com/finance/option_chain?q=%s&output=json'
 URL2 = 'http://www.google.com/finance/option_chain?q=%s&output=json&expy=%d&expm=%d&expd=%d'
 
-getOptionQuote <- function(symbol){
+getOptionQuotes <- function(symbol){
   url = sprintf(URL1, symbol)
   #
   chain = fromJSON(fixJSON(getURL(url)))
   #
-  # Under what conditions do we need to exclude first row here using [-1,]????
-  # Under what conditions do we need to exclude first row here using [-1,]????
-  # Under what conditions do we need to exclude first row here using [-1,]????
-  # Under what conditions do we need to exclude first row here using [-1,]????
-  # Under what conditions do we need to exclude first row here using [-1,]????
-  # Under what conditions do we need to exclude first row here using [-1,]????
-  # Under what conditions do we need to exclude first row here using [-1,]????
+  # Iterate over the expiry dates
   #
   options = mlply(chain$expirations, function(y, m, d) {
     url = sprintf(URL2, symbol, y, m, d)
@@ -48,11 +42,10 @@ getOptionQuote <- function(symbol){
   #
   options = cbind(data.frame(symbol), rbind.fill(options))
   #
-  options[,12] = as.numeric(options[,12])
-  options[,10] = suppressWarnings(as.integer(options[,10]))
+  options[, "strike"] = as.numeric(options[, "strike"])
+  options[, "oi"] = suppressWarnings(as.integer(options[, "oi"]))
   #
-  names(options)[10] = "open.interest"
+  names(options)[c(6, 10, 11, 12)] = c("price", "bid", "ask", "open.interest")
   #
-  options[, c(1, 16, 13, 12, 10, 17)]
+  options[, c(1, 16, 15, 6, 10, 11, 17, 14, 12)]
 }
-aapl_opt = getOptionQuote("AAPL")
