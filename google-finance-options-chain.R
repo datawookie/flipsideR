@@ -35,6 +35,8 @@ getOptionQuotes <- function(symbol){
     prices$expiry = sprintf("%4d-%02d-%02d", y, m, d)
     prices$underlying.price = expiry$underlying_price
     #
+    prices$retrieved = Sys.time()
+    #
     prices
   })
   #
@@ -42,10 +44,10 @@ getOptionQuotes <- function(symbol){
   #
   options = cbind(data.frame(symbol), rbind.fill(options))
   #
-  options[, "strike"] = as.numeric(options[, "strike"])
-  options[, "oi"] = suppressWarnings(as.integer(options[, "oi"]))
+  names(options)[c(6, 10, 11, 12)] = c("premium", "bid", "ask", "open.interest")
   #
-  names(options)[c(6, 10, 11, 12)] = c("price", "bid", "ask", "open.interest")
+  for (col in c("strike", "premium", "bid", "ask")) options[, col] = as.numeric(options[, col])
+  options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))
   #
-  options[, c(1, 16, 15, 6, 10, 11, 17, 14, 12)]
+  options[, c(1, 16, 15, 6, 10, 11, 17, 14, 12, 18)]
 }
