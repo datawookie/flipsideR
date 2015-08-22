@@ -7,24 +7,28 @@ library(plyr)
 # A more direct method to fix the JSON data (making sure that all the keys are quoted). This will be a lot faster
 # for large JSON packages.
 #
-fixJSON <- function(json){
+fixJSON <- function(json) {
   gsub('([^,{:]+):', '"\\1":', json)
 }
 
 # URL templates
 #
-URL1 = 'http://www.google.com/finance/option_chain?q=%s&output=json'
-URL2 = 'http://www.google.com/finance/option_chain?q=%s&output=json&expy=%d&expm=%d&expd=%d'
+URL1 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json'
+URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&expm=%d&expd=%d'
 
-getOptionQuotes <- function(symbol){
-  url = sprintf(URL1, symbol)
+getOptionQuotes <- function(symbol, exchange = NA) {
+  exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
   #
-  chain = fromJSON(fixJSON(getURL(url)))
+  url = sprintf(URL1, exchange, symbol)
+  #
+  chain = tryCatch(fromJSON(fixJSON(getURL(url))), error = function(e) NULL)
+  #
+  if (is.null(chain)) stop(sprintf("retrieved document is not JSON. Try opening %s in your browser.", url))
   #
   # Iterate over the expiry dates
   #
   options = mlply(chain$expirations, function(y, m, d) {
-    url = sprintf(URL2, symbol, y, m, d)
+    url = sprintf(URL2, exchange, symbol, y, m, d)
     expiry = fromJSON(fixJSON(getURL(url)))
     #
     expiry$calls$type = "Call"
@@ -40,14 +44,16 @@ getOptionQuotes <- function(symbol){
     prices
   })
   #
+  options = options[sapply(options, class) == "data.frame"]
+  #
   # Concatenate data for all expiration dates and add in symbol column
   #
   options = cbind(data.frame(symbol), rbind.fill(options))
   #
-  names(options)[c(6, 10, 11, 12)] = c("premium", "bid", "ask", "open.interest")
+  options = rename(options, c("p" = "premium", "b" = "bid", "a" = "ask", "oi" = "open.interest"))
   #
-  for (col in c("strike", "premium", "bid", "ask")) options[, col] = as.numeric(options[, col])
+  for (col in c("strike", "premium", "bid", "ask")) options[, col] = suppressWarnings(as.numeric(options[, col]))
   options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))
   #
-  options[, c(1, 16, 15, 6, 10, 11, 17, 14, 12, 18)]
+  options[, c("symbol", "type", "expiry", "strike", "premium", "bid", "ask", "open.interest", "retrieved")]
 }
