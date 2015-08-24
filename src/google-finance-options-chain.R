@@ -54,6 +54,7 @@ getOptionQuotes <- function(symbol, exchange = NA) {
   #
   for (col in c("strike", "premium", "bid", "ask")) options[, col] = suppressWarnings(as.numeric(options[, col]))
   options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))
+  options[, "volume"]        = suppressWarnings(as.integer(options[, "volume"]))
   #
   options[, c("symbol", "type", "expiry", "strike", "premium", "bid", "ask", "volume", "open.interest", "retrieved")]
 }
