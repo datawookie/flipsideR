@@ -50,10 +50,10 @@ getOptionQuotes <- function(symbol, exchange = NA) {
   #
   options = cbind(data.frame(symbol), rbind.fill(options))
   #
-  options = rename(options, c("p" = "premium", "b" = "bid", "a" = "ask", "oi" = "open.interest"))
+  options = rename(options, c("p" = "premium", "b" = "bid", "a" = "ask", "oi" = "open.interest", "vol" = "volume"))
   #
   for (col in c("strike", "premium", "bid", "ask")) options[, col] = suppressWarnings(as.numeric(options[, col]))
   options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))
   #
-  options[, c("symbol", "type", "expiry", "strike", "premium", "bid", "ask", "open.interest", "retrieved")]
+  options[, c("symbol", "type", "expiry", "strike", "premium", "bid", "ask", "volume", "open.interest", "retrieved")]
 }
