@@ -16,6 +16,11 @@ fixJSON <- function(json) {
 URL1 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json'
 URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&expm=%d&expd=%d'
 
+# Dave Peterson <davep865@gmail.com> noted that when he requested data for "CVX" he would get an
+# error. It turned out that issue here was that he was based in Canada and Google was looking at
+# a stock on the Canadian stock exchange with the same symbol (and which did not have options).
+# To resolve this issue he found that specifying NYSE:CVX rather than just CVX worked.
+#
 getOptionQuotes <- function(symbol, exchange = NA) {
   exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
   #
@@ -23,7 +28,7 @@ getOptionQuotes <- function(symbol, exchange = NA) {
   #
   chain = tryCatch(fromJSON(fixJSON(getURL(url))), error = function(e) NULL)
   #
-  if (is.null(chain)) stop(sprintf("retrieved document is not JSON. Try opening %s in your browser.", url))
+  if (is.null(chain)) stop(sprintf("Retrieved document is not JSON. Try opening %s in your browser.", url))
   #
   # Iterate over the expiry dates
   #
@@ -43,6 +48,8 @@ getOptionQuotes <- function(symbol, exchange = NA) {
     #
     prices
   })
+  #
+  # Filter out dates with data
   #
   options = options[sapply(options, class) == "data.frame"]
   #

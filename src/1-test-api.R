@@ -1,7 +1,17 @@
 source("google-finance-options-chain.R")
 
+# This fails...
+#
+AAPL = getOptionQuotes("AAPL", "NYSE")
+#
+# ... but these work.
+#
 AAPL = getOptionQuotes("AAPL")
-MMM = getOptionQuotes("MMM")
+CVX  = getOptionQuotes("CVX", "NYSE")
+BA   = getOptionQuotes("BA", "NYSE")
+WMT  = getOptionQuotes("WMT", "NYSE")
+MSFT = getOptionQuotes("MSFT", "NASDAQ")
+MMM  = getOptionQuotes("MMM")
 
 # Does this make sense? Not having much prior experience with options, I had to think about this for a bit.
 # Why would the Call options be cheap at strike prices above the underlying price and get progressively more
