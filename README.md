@@ -1,3 +1,5 @@
-# Google-Finance
+# flisideR
 
-Scripts for working with data from Google Finance.
+Scripts for working with options data from Google Finance.
+
+## Installation

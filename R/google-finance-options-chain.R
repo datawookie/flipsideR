@@ -1,6 +1,4 @@
-library(RCurl)
 library(jsonlite)
-library(plyr)
 
 # Initial version of this code based on http://mktstk.wordpress.com/2014/12/29/start-trading-like-a-quant-download-option-chains-from-google-finance-in-r/
 
@@ -21,6 +19,10 @@ URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&ex
 # a stock on the Canadian stock exchange with the same symbol (and which did not have options).
 # To resolve this issue he found that specifying NYSE:CVX rather than just CVX worked.
 #
+#' @export
+#' @importFrom jsonlite fromJSON
+#' @importFrom plyr mlply rbind.fill rename
+#' @importFrom RCurl getURL
 getOptionQuotes <- function(symbol, exchange = NA) {
 	exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
 	#

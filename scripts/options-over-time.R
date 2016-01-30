@@ -1,4 +1,4 @@
-source("google-finance-options-chain.R")
+library(flipsideR)
 
 # Download options data at hourly intervals and see how they change with time.
 #

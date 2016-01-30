@@ -1,28 +1,6 @@
-source("google-finance-options-chain.R")
+library(flipsideR)
 
-# This fails...
-#
-AAPL = getOptionQuotes("AAPL", "NYSE")
-#
-# ... but these work.
-#
 AAPL = getOptionQuotes("AAPL")
-CVX  = getOptionQuotes("CVX", "NYSE")
-BA   = getOptionQuotes("BA", "NYSE")
-WMT  = getOptionQuotes("WMT", "NYSE")
-MSFT = getOptionQuotes("MSFT", "NASDAQ")
-MMM  = getOptionQuotes("MMM")
-
-# Does this make sense? Not having much prior experience with options, I had to think about this for a bit.
-# Why would the Call options be cheap at strike prices above the underlying price and get progressively more
-# expensive as the strike price gets smaller? The strike price is that at which the holder of the option has
-# the right to buy the security. So, to keep things simple, suppose that a stock is currently selling at $100.
-# Would you be interested in purchasing the right to buy that stock at $150? Probably not. However, what about
-# the right to buy the stock at $50. That sounds a lot more interesting.
-
-head(AAPL)
-tail(AAPL)
-nrow(AAPL)
 
 library(ggplot2)
 library(gridExtra)
