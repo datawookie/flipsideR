@@ -1,5 +1,3 @@
-library(jsonlite)
-
 # Initial version of this code based on http://mktstk.wordpress.com/2014/12/29/start-trading-like-a-quant-download-option-chains-from-google-finance-in-r/
 
 # A more direct method to fix the JSON data (making sure that all the keys are quoted). This will be a lot faster
@@ -14,11 +12,14 @@ fixJSON <- function(json) {
 URL1 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json'
 URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&expm=%d&expd=%d'
 
-# Dave Peterson <davep865@gmail.com> noted that when he requested data for "CVX" he would get an
-# error. It turned out that issue here was that he was based in Canada and Google was looking at
-# a stock on the Canadian stock exchange with the same symbol (and which did not have options).
-# To resolve this issue he found that specifying NYSE:CVX rather than just CVX worked.
-#
+#' Retrieve options dataAAPL.
+#'
+#' @param symbol A ticker symbol.
+#' @param exchange The exchange on which symbol is listed.
+#' @return A data frame with the required options.
+#' @examples
+#' getOptionQuotes("AAPL")
+#' getOptionQuotes("MSFT", "NASDAQ")
 #' @export
 #' @importFrom jsonlite fromJSON
 #' @importFrom plyr mlply rbind.fill rename
