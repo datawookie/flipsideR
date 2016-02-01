@@ -3,13 +3,13 @@ library(flipsideR)
 context("Test download of options data.")
 
 test_that("retrieving options gives right data type", {
-  AAPL = getOptionQuotes("AAPL")
+  AAPL = getOptionChain("AAPL")
   expect_equal(class(AAPL), "data.frame")
   expect_equal(ncol(AAPL), 10)
 })
 
 test_that("fails for (wrong) specific exchange", {
-  AAPL = tryCatch(getOptionQuotes("AAPL", "NYSE"), error = function(e) 1)
+  AAPL = tryCatch(getOptionChain("AAPL", "NYSE"), error = function(e) 1)
   expect_equal(AAPL, 1)
 })
 
@@ -26,6 +26,6 @@ test_that("fails for (wrong) specific exchange", {
 # WMT | NYSE
 #
 test_that("succeeds for (right) specific exchange", {
-  MSFT = getOptionQuotes("MSFT", "NASDAQ")
+  MSFT = getOptionChain("MSFT", "NASDAQ")
   expect_equal(class(MSFT), "data.frame")
 })

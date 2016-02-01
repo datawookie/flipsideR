@@ -18,14 +18,14 @@ URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&ex
 #' @param exchange The exchange on which symbol is listed.
 #' @return A data frame with the required options.
 #' @examples
-#' getOptionQuotes("AAPL")
-#' getOptionQuotes("MSFT", "NASDAQ")
+#' getOptionChain("AAPL")
+#' getOptionChain("MSFT", "NASDAQ")
 #' @export
 #' @importFrom jsonlite fromJSON
 #' @importFrom plyr mlply
 #' @importFrom dplyr bind_rows rename
 #' @importFrom RCurl getURL
-getOptionQuotes <- function(symbol, exchange = NA) {
+getOptionChain <- function(symbol, exchange = NA) {
 	exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
 	#
 	url = sprintf(URL1, exchange, symbol)

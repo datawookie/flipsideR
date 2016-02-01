@@ -1,6 +1,6 @@
 library(flipsideR)
 
-AAPL = getOptionQuotes("AAPL")
+AAPL = getOptionChain("AAPL")
 
 library(ggplot2)
 library(gridExtra)

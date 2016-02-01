@@ -15,6 +15,6 @@ options = foreach (n = 1:NHOURS) %do% {
   timestamp = Sys.time()
   print(timestamp)
   #
-  D = rbind(getOptionQuotes("AAPL"), getOptionQuotes("MSFT"), getOptionQuotes("ADBE"), getOptionQuotes("RHT"))
+  D = rbind(getOptionChain("AAPL"), getOptionChain("MSFT"), getOptionChain("ADBE"), getOptionChain("RHT"))
   write.csv(D, file = file.path("data", strftime(timestamp, "%Y%m%d-%H%M%S.csv")))
 }

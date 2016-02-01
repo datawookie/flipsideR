@@ -35,7 +35,7 @@ The data retrieved by flipsideR is essentially the same, but instead of returnin
 
 ```R
 > library(flipsideR)
-> AAPL = getOptionQuotes("AAPL")   
+> AAPL = getOptionChain("AAPL")   
 > head(AAPL)
   symbol type     expiry strike premium   bid   ask volume open.interest           retrieved
 1   AAPL Call 2016-02-05     50      NA 46.95 47.25     NA             0 2016-01-31 06:03:30
