@@ -1,6 +1,6 @@
 library(flipsideR)
 
-context("Test downloading of options quotes")
+context("Test download of options data.")
 
 test_that("retrieving options gives right data type", {
   AAPL = getOptionQuotes("AAPL")
