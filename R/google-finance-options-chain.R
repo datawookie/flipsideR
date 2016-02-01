@@ -20,11 +20,10 @@ URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&ex
 #' @examples
 #' getOptionChain("AAPL")
 #' getOptionChain("MSFT", "NASDAQ")
-#' @export
 #' @importFrom jsonlite fromJSON
-#' @importFrom plyr mlply
-#' @importFrom dplyr bind_rows rename
+#' @importFrom plyr mlply rbind.fill rename
 #' @importFrom RCurl getURL
+#' @export
 getOptionChain <- function(symbol, exchange = NA) {
 	exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
 	#
@@ -43,7 +42,7 @@ getOptionChain <- function(symbol, exchange = NA) {
 		expiry$calls$type = "Call"
 		expiry$puts$type  = "Put"
 		#
-		prices = bind_rows(expiry$calls, expiry$puts)
+		prices = rbind.fill(expiry$calls, expiry$puts)
 		#
 		prices$expiry = sprintf("%4d-%02d-%02d", y, m, d)
 		prices$underlying.price = expiry$underlying_price
@@ -59,9 +58,9 @@ getOptionChain <- function(symbol, exchange = NA) {
 	#
 	# Concatenate data for all expiration dates and add in symbol column
 	#
-	options = cbind(data.frame(symbol), bind_rows(options))
+	options = cbind(data.frame(symbol), rbind.fill(options))
 	#
-	options = rename(options, premium = p, bid = b, ask = a, open.interest = oi, volume = vol)
+	options = rename(options, c("p" = "premium", "b" = "bid", "a" = "ask", "oi" = "open.interest", "vol" = "volume"))
 	#
 	for (col in c("strike", "premium", "bid", "ask")) options[, col] = suppressWarnings(as.numeric(options[, col]))
 	options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))

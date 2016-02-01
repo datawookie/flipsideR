@@ -2,7 +2,7 @@
 
 export(getOptionChain)
 importFrom(RCurl,getURL)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,rename)
 importFrom(jsonlite,fromJSON)
 importFrom(plyr,mlply)
+importFrom(plyr,rbind.fill)
+importFrom(plyr,rename)
