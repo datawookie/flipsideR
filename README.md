@@ -1,12 +1,20 @@
 # flisideR
 
-Scripts for working with options data from Google Finance.
+Scripts for working with Option Chain data from Google Finance. An Option Chain is a list of the Put and Call options on a given security for a specific maturity date.
 
 ## Installation
 
+Installation is straightforward using the devtools package.
+
+```R
+library(devtools)
+install_github("DataWookie/flipsideR")
+library(flipsideR)
+```
+
 ## Functionality
 
-The [quantmod](http://www.quantmod.com/) package has implemented functionality to download options chain data.
+The [quantmod](http://www.quantmod.com/) package has existing functionality for accessing option chain data.
 
 ```R
 > library(quantmod)
@@ -31,7 +39,7 @@ AAPL160205P00085000   85.0 0.03 -0.07 0.03 0.04 1390 2999
 AAPL160205P00085500   85.5 0.05 -0.15 0.02 0.06   10  248
 ```
 
-The data retrieved by flipsideR is essentially the same, but instead of returning a list of data frames with separate elements for Put and Call options, these are all consolidated in a single data frame. There's also a field indicating the time at which these data were retrieved. Since options data can be rather volative, this is an important feature.
+The data retrieved by flipsideR is essentially the same, but instead of returning a list of data frames with separate elements for Put and Call options, these are all consolidated in a single data frame. There's also a field indicating the time at which these data were retrieved. Since options data can be volative, this is an important feature.
 
 ```R
 > library(flipsideR)
