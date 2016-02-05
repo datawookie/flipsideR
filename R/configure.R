@@ -5,3 +5,5 @@
 .onLoad <- function(libname, pkgname) {
   invisible()
 }
+
+COLORDER = c("symbol", "type", "expiry", "strike", "premium", "bid", "ask", "volume", "open.interest", "retrieved")

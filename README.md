@@ -9,7 +9,6 @@ Installation is straightforward using the devtools package.
 ```R
 library(devtools)
 install_github("DataWookie/flipsideR")
-library(flipsideR)
 ```
 
 ## Functionality

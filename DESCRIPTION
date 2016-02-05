@@ -12,7 +12,10 @@ Imports:
     RCurl,
     jsonlite (>= 0.9.17),
     plyr,
-    dplyr
+    dplyr,
+    magrittr,
+    rvest,
+    xml2
 Suggests:
     testthat
 RoxygenNote: 5.0.0
