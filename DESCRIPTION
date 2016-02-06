@@ -1,7 +1,7 @@
 Package: flipsideR
 Type: Package
 Title: flipsideR
-Version: 0.1
+Version: 0.2
 Date: 2016-01-27
 Authors@R: person("Andrew B.", "Collier", email = "andrew@exegetic.biz", role = "cre")
 URL: https://github.com/DataWookie/flipsideR

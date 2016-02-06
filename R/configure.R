@@ -1,5 +1,9 @@
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage("flipsideR")
+  description = packageDescription("flipsideR")
+
+  packageStartupMessage(description$Package, " (version ", description$Version, ") ",
+                        format(eval(parse(text = description$`Authors@R`)), include = c("given", "family", "email"))
+                        )
 }
 
 .onLoad <- function(libname, pkgname) {
