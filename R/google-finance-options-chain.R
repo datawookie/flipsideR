@@ -1,3 +1,6 @@
+# TODO: Trying to avoid using dplyr and plyr. Right now dplyr is just being used for soring in a magrittr chain. Ideally
+# I would like to move across to dplyr completely but I don't see an equivalent to mlply().
+
 # Initial version of this code based on http://mktstk.wordpress.com/2014/12/29/start-trading-like-a-quant-download-option-chains-from-google-finance-in-r/
 
 # A more direct method to fix the JSON data (making sure that all the keys are quoted). This will be a lot faster
@@ -16,7 +19,6 @@ URLASX = 'http://www.asx.com.au/asx/markets/optionPrices.do?by=underlyingCode&un
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes html_table
 #' @import magrittr
-#' @export
 getOptionChainAsx <- function(symbol) {
   url = sprintf(URLASX, symbol)
 
@@ -55,6 +57,10 @@ URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&ex
 #' @importFrom RCurl getURL
 #' @export
 getOptionChain <- function(symbol, exchange = NA) {
+  exchange = toupper(exchange)
+  #
+  if (exchange == "ASX") return(getOptionChainAsx(symbol))
+  #
 	exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
 	#
 	url = sprintf(URL1, exchange, symbol)

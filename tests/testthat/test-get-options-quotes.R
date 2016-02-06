@@ -29,3 +29,9 @@ test_that("succeeds for (right) specific exchange", {
   MSFT = getOptionChain("MSFT", "NASDAQ")
   expect_equal(class(MSFT), "data.frame")
 })
+
+# These are some of the more active options on ASX: CBA, NAB, WBC, BHP and RIO.
+#
+test_that("retrieves ASX options", {
+  OZL = getOptionChain("OZL", "ASX")
+})
