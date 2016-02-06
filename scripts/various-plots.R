@@ -36,3 +36,26 @@ g2 <- ggplot(subset(AAPL, expiry == next.expiry), aes(x = strike)) +
 png(file.path("fig", "open-interest-premium-strike-price-AAPL.png"), width = 800, height = 800)
 grid.arrange(g1, g2, ncol = 1)
 dev.off()
+
+# ---------------------------------------------------------------------------------------------------------------------
+# PLOTLY
+# ---------------------------------------------------------------------------------------------------------------------
+
+ozl = subset(ozl, expiry == next.expiry)
+
+p <- subplot(
+  plot_ly(subset(ozl, type == "Call"), x = strike, y = premium, mode = "markers", name = "Call"),
+  plot_ly(subset(ozl, type == "Put"), x = strike, y = premium, mode = "markers", name = "Put"
+          # , text = sprintf("%.3f/%.3f", bid, ask)
+  ),
+  margin = 0.05
+) %>% layout(
+  title= sprintf("OZL Options (expiring %s)", next.expiry),
+  showlegend = FALSE,
+  xaxis = list(range = range(ozl$strike) + c(-0.1, 0.1), title = "Strike Price"),
+  yaxis = list(range = range(ozl$premium) + c(-0.1, 0.1), title = "Premium"),
+  xaxis2 = list(range = range(ozl$strike) + c(-0.1, 0.1), title = "Strike Price"),
+  yaxis2 = list(range = range(ozl$premium) + c(-0.1, 0.1), title = ""),
+  margin = list(t = 40, b = 40)
+)
+plotly_POST(p, filename="Sundry/ozl-option-put-call")
