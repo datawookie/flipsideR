@@ -53,3 +53,9 @@ test_that("succeeds for (right) specific exchange", {
 test_that("retrieves ASX options", {
   OZL = getOptionChain("OZL", "ASX")
 })
+
+# TODO: Write this test. Use symbol AMB.
+#
+test_that("elegant failure on missing ASX options", {
+
+})

@@ -9,7 +9,7 @@
 # for large JSON packages.
 #
 fixJSON <- function(json) {
-	gsub('([^,{:]+):', '"\\1":', json)
+  gsub('([^,{:]+):', '"\\1":', json)
 }
 
 # AUSTRALIAN OPTIONS --------------------------------------------------------------------------------------------------
@@ -25,15 +25,27 @@ getOptionChainAsx <- function(symbol) {
   url = sprintf(URLASX, symbol)
 
   html <- read_html(url)
+  #
+  html <- html %>% html_nodes("table.options") %>% html_table(header = TRUE)
+  #
+  # There might be a shares table too, so we need to find index to the correct table.
+  #
+  index = grep("P/C", lapply(html, names))
+  #
+  # if (length(html) < 2) {
+  #   warning("No data for symbol ", symbol, ".")
+  #   return(NULL)
+  # }
 
   # Use the second element in the list (the first element gives data on the underlying stock)
   #
-  options = (html %>% html_nodes("table.options") %>% html_table(header = TRUE))[[2]] %>%
+  options = html[[index]] %>%
     rename(c("Bid" = "bid", "Offer" = "ask", "Openinterest" = "open.interest", "Volume" = "volume", "Expirydate" = "expiry",
              "P/C" = "type", "Margin Price" = "premium", "Exercise" = "strike")) %>%
     transform(
       symbol        = symbol,
       retrieved     = Sys.time(),
+      strike        = suppressWarnings(as.numeric(gsub(",", "", strike))),
       open.interest = suppressWarnings(as.integer(gsub(",", "", open.interest))),
       premium       = suppressWarnings(as.numeric(premium)),
       bid           = suppressWarnings(as.numeric(bid)),
@@ -66,48 +78,50 @@ URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&ex
 getOptionChain <- function(symbol, exchange = NA) {
   exchange = toupper(exchange)
   #
-  if (exchange == "ASX") return(getOptionChainAsx(symbol))
+  if (!is.na(exchange)) {
+    if (exchange == "ASX") return(getOptionChainAsx(symbol))
+  }
   #
-	exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
-	#
-	url = sprintf(URL1, exchange, symbol)
-	#
-	chain = tryCatch(fromJSON(fixJSON(getURL(url))), error = function(e) NULL)
-	#
-	if (is.null(chain)) stop(sprintf("Retrieved document is not JSON. Try opening %s in your browser.", url))
-	#
-	# Iterate over the expiry dates
-	#
-	options = mlply(chain$expirations, function(y, m, d) {
-		url = sprintf(URL2, exchange, symbol, y, m, d)
-		expiry = fromJSON(fixJSON(getURL(url)))
-		#
-		expiry$calls$type = "Call"
-		expiry$puts$type  = "Put"
-		#
-		prices = rbind.fill(expiry$calls, expiry$puts)
-		#
-		prices$expiry = sprintf("%4d-%02d-%02d", y, m, d)
-		prices$underlying.price = expiry$underlying_price
-		#
-		prices$retrieved = Sys.time()
-		#
-		prices
-	})
-	#
-	# Filter out dates with data
-	#
-	options = options[sapply(options, class) == "data.frame"]
-	#
-	# Concatenate data for all expiration dates and add in symbol column
-	#
-	options = cbind(data.frame(symbol), rbind.fill(options))
-	#
-	options = rename(options, c("p" = "premium", "b" = "bid", "a" = "ask", "oi" = "open.interest", "vol" = "volume"))
-	#
-	for (col in c("strike", "premium", "bid", "ask")) options[, col] = suppressWarnings(as.numeric(options[, col]))
-	options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))
-	options[, "volume"]        = suppressWarnings(as.integer(options[, "volume"]))
-	#
-	options[, COLORDER]
+  exchange = ifelse(is.na(exchange), "", paste0(exchange, ":"))
+  #
+  url = sprintf(URL1, exchange, symbol)
+  #
+  chain = tryCatch(fromJSON(fixJSON(getURL(url))), error = function(e) NULL)
+  #
+  if (is.null(chain)) stop(sprintf("Retrieved document is not JSON. Try opening %s in your browser.", url))
+  #
+  # Iterate over the expiry dates
+  #
+  options = mlply(chain$expirations, function(y, m, d) {
+    url = sprintf(URL2, exchange, symbol, y, m, d)
+    expiry = fromJSON(fixJSON(getURL(url)))
+    #
+    expiry$calls$type = "Call"
+    expiry$puts$type  = "Put"
+    #
+    prices = rbind.fill(expiry$calls, expiry$puts)
+    #
+    prices$expiry = sprintf("%4d-%02d-%02d", y, m, d)
+    prices$underlying.price = expiry$underlying_price
+    #
+    prices$retrieved = Sys.time()
+    #
+    prices
+  })
+  #
+  # Filter out dates with data
+  #
+  options = options[sapply(options, class) == "data.frame"]
+  #
+  # Concatenate data for all expiration dates and add in symbol column
+  #
+  options = cbind(data.frame(symbol), rbind.fill(options))
+  #
+  options = rename(options, c("p" = "premium", "b" = "bid", "a" = "ask", "oi" = "open.interest", "vol" = "volume"))
+  #
+  for (col in c("strike", "premium", "bid", "ask")) options[, col] = suppressWarnings(as.numeric(options[, col]))
+  options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))
+  options[, "volume"]        = suppressWarnings(as.integer(options[, "volume"]))
+  #
+  options[, COLORDER]
 }
