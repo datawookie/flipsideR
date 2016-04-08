@@ -41,21 +41,25 @@ dev.off()
 # PLOTLY
 # ---------------------------------------------------------------------------------------------------------------------
 
-ozl = subset(ozl, expiry == next.expiry)
+library(plotly)
+
+OZL = getOptionChain("OZL", "ASX")
+
+OZL = subset(OZL, expiry == min(expiry))
 
 p <- subplot(
-  plot_ly(subset(ozl, type == "Call"), x = strike, y = premium, mode = "markers", name = "Call"),
-  plot_ly(subset(ozl, type == "Put"), x = strike, y = premium, mode = "markers", name = "Put"
+  plot_ly(subset(OZL, type == "Call"), x = strike, y = premium, mode = "markers", name = "Call"),
+  plot_ly(subset(OZL, type == "Put"), x = strike, y = premium, mode = "markers", name = "Put"
           # , text = sprintf("%.3f/%.3f", bid, ask)
   ),
   margin = 0.05
 ) %>% layout(
-  title= sprintf("OZL Options (expiring %s)", next.expiry),
+  title= sprintf("OZL Options (expiring %s)", min(OZL$expiry)),
   showlegend = FALSE,
-  xaxis = list(range = range(ozl$strike) + c(-0.1, 0.1), title = "Strike Price"),
-  yaxis = list(range = range(ozl$premium) + c(-0.1, 0.1), title = "Premium"),
-  xaxis2 = list(range = range(ozl$strike) + c(-0.1, 0.1), title = "Strike Price"),
-  yaxis2 = list(range = range(ozl$premium) + c(-0.1, 0.1), title = ""),
+  xaxis = list(range = range(OZL$strike) + c(-0.1, 0.1), title = "Strike Price"),
+  yaxis = list(range = range(OZL$premium) + c(-0.1, 0.1), title = "Premium"),
+  xaxis2 = list(range = range(OZL$strike) + c(-0.1, 0.1), title = "Strike Price"),
+  yaxis2 = list(range = range(OZL$premium) + c(-0.1, 0.1), title = ""),
   margin = list(t = 40, b = 40)
 )
 plotly_POST(p, filename="Sundry/ozl-option-put-call")
