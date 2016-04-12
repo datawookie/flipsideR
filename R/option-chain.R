@@ -5,10 +5,11 @@
 
 # Initial version of this code based on http://mktstk.wordpress.com/2014/12/29/start-trading-like-a-quant-download-option-chains-from-google-finance-in-r/
 
-# A more direct method to fix the JSON data (making sure that all the keys are quoted). This will be a lot faster
-# for large JSON packages.
+# - Remove comma separators after thousands (and millions!).
+# - Make sure that all keys are quoted.
 #
 fixJSON <- function(json) {
+	json <- gsub("(?<=[[:digit:]]),(?=[[:digit:]]{3})", "", json, perl = TRUE) 
   gsub('([^,{:]+):', '"\\1":', json)
 }
 
@@ -62,6 +63,25 @@ getOptionChainAsx <- function(symbol) {
 #
 URL1 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json'
 URL2 = 'http://www.google.com/finance/option_chain?q=%s%s&output=json&expy=%d&expm=%d&expd=%d'
+
+# Structure of JSON:
+#
+# {  
+#   cid:"967806907935282",			-- CBOE code
+#   name:"",
+#   s:"AAPL160422C00125000",		-- code (symbol + YYMMDD + C|P + price format)
+#   e:"OPRA",										-- data source
+#   p:"0.02",										-- last traded price
+#   cs:"chb",										-- change sign (chg = +, chr = -, chb = unchanged, NA = no comparable trades)
+#   c:"0.00",										-- change in price since previous trade
+#   cp:"0.00",
+#   b:"0.01",										-- Bid
+#   a:"0.03",										-- Ask
+#   oi:"729",										-- open interest
+#   vol:"-",										-- volume traded
+#   strike:"125.00",						-- strike price
+#   expiry:"Apr 22, 2016"				-- expiration date
+# }
 
 #' Retrieve options dataAAPL.
 #'
