@@ -38,11 +38,16 @@ getOptionChainAsx <- function(symbol) {
   #   return(NULL)
   # }
 
+  #
+  # Remove all whitespace in colnames (some contain \n\t)
+  #
+  colnames(html[[index]]) <- gsub("\\s+", "", colnames(html[[index]]))
+
   # Use the second element in the list (the first element gives data on the underlying stock)
   #
   options = html[[index]] %>%
     rename(c("Bid" = "bid", "Offer" = "ask", "Openinterest" = "open.interest", "Volume" = "volume", "Expirydate" = "expiry",
-             "P/C" = "type", "Margin Price" = "premium", "Exercise" = "strike")) %>%
+             "P/C" = "type", "MarginPrice" = "premium", "Exercise" = "strike")) %>%
     transform(
       symbol        = symbol,
       retrieved     = Sys.time(),
